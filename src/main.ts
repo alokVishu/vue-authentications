@@ -5,6 +5,7 @@
  */
 
 // Components
+import '@/@fake-db/db'
 import App from './App.vue'
 
 // Composables

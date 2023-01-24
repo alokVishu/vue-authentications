@@ -11,11 +11,14 @@
     <router-link to="/about" class="me-3">About</router-link>
     <router-link to="/service" class="me-3">Service</router-link>
     <router-link to="/login" class="me-3">Login</router-link>
+    <v-btn color="error" @click="logOut">logout</v-btn>
   </v-app-bar>
 </template>
 
 <script lang="ts" setup>
-
+const logOut = () => {
+  localStorage.clear()
+}
 </script>
 
 <style lang="css">
