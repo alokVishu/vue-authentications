@@ -1,14 +1,15 @@
 // Composables
-import { createRouter, createWebHistory } from 'vue-router'
-import {isUserLoggedIn} from './utils'
+import { createRouter, createWebHistory, RouteLocationNormalized } from 'vue-router'
+import { isUserLoggedIn } from './utils'
+import ability from '@/plugins/casl/ability'
 
 const routes = [
   {
     path: '/',
     component: () => import('@/layouts/default/Default.vue'),
-    meta: {
-      requiresAuth:true
-    },
+    // meta: {
+    //   requiresAuth:true
+    // },
     children: [
       {
         path: '',
@@ -19,7 +20,7 @@ const routes = [
         component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
         // meta: {
         //   requiresAuth:true
-        // }
+        // }  
       },
       {
         path: '/about',
@@ -27,7 +28,7 @@ const routes = [
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
-        component: () => import(/* webpackChunkName: "home" */ '@/views/About.vue'),
+        component: () => import(/* webpackChunkName: "home" */ '@/views/About.vue'),  
         //  meta: {
         //   requiresAuth:true
         // }
@@ -53,7 +54,9 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "home" */ '@/views/Login.vue'),
     meta: {
-      redirectIfLoggedIn:true
+      redirectIfLoggedIn: true,
+      action: 'read',
+      subject:'Auth'
     }
   },
   {
@@ -64,7 +67,22 @@ const routes = [
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "home" */ '@/views/Register.vue'),
     meta: {
-      redirectIfLoggedIn:true
+      redirectIfLoggedIn: true,
+      action: 'read',
+      subject:'Auth'
+    }
+  },
+  {
+    path: '/not-authorized',
+    name: 'Not-authorized',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: () => import(/* webpackChunkName: "home" */ '@/views/NotAuthorized.vue'),
+    meta: {
+      redirectIfLoggedIn: true,
+      action: 'read',
+      subject:'Auth'
     }
   },
 ]
@@ -74,15 +92,35 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from) => {
+
+const canNavigate = (to: RouteLocationNormalized) => {
+  // @ts-expect-error We should allow passing string | undefined to can because for admin ability we omit defining action & subject
+  return to.matched.some(route => ability.can(route.meta.action, route.meta.subject))
+}
+
+
+router.beforeEach((to) => {
   const isLoggedIn = isUserLoggedIn()
   
-  if (to.meta.requiresAuth && !isLoggedIn) {    
-    return { name: 'Login', query: { to: to.fullPath } }
-  }
+  // if (to.meta.requiresAuth && !isLoggedIn) {    
+  //   return { name: 'Login', query: { to: to.fullPath } }
+  // }
 
-  if (to.meta.redirectIfLoggedIn && isLoggedIn) {    
-    return { name: 'Home'}
+  // if (to.meta.redirectIfLoggedIn && isLoggedIn) {
+  //   return { name: 'Home'}
+  if (canNavigate(to)) {
+    if (to.meta.redirectIfLoggedIn && isLoggedIn) {
+      return { name: 'Home'}   
+    }
   }
+  else {
+    if (isLoggedIn) {
+      return { name:'Not-authorized' }
+    }
+    else {
+      return {name:'Login', query:{to:to.fullPath}}
+    }
+  }
+  // }
 })
 export default router

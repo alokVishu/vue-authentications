@@ -50,11 +50,21 @@ mock.onGet('/login').reply((request) => {
 
 mock.onPost('/register').reply(request => {
   const { username, email, password } = JSON.parse(request.data)
-  console.log(username);
-  console.log(email);
-  console.log(password);
-  
-  
-    
-  return [200]
+
+  const user = {
+    id: 2,
+    fullName: username,
+    username: username,
+    password: password,
+    email: email,
+    role: 'admin',
+     abilities: [
+      {
+        action: 'manage',
+        subject: 'all',
+      },
+    ],
+  }
+
+  return [200, user]
 })

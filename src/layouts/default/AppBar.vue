@@ -16,8 +16,11 @@
 </template>
 
 <script lang="ts" setup>
+import { useRouter } from 'vue-router'
+const router = useRouter()
 const logOut = () => {
   localStorage.clear()
+  router.push({ name: 'Login' })
 }
 </script>
 

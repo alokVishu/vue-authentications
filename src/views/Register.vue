@@ -38,6 +38,7 @@
 <script setup lang="ts">
 import { VForm } from 'vuetify/components'
 import axios from '@axios';
+import { useRouter } from 'vue-router'
 import { ref } from 'vue'
 const registerForm = ref<VForm>()
 const registerData = ref({
@@ -46,6 +47,7 @@ const registerData = ref({
   password: '',
 })
 
+const router = useRouter()
 const register = () => {
   registerForm.value?.validate().then(() => {
     axios.post('/register', {
@@ -53,9 +55,10 @@ const register = () => {
       email: registerData.value.email,
       password: registerData.value.password,
     }).then((response) => {
-      // console.log(response);
+      localStorage.setItem('userData', JSON.stringify(response.data))
+      router.push('/')
     }).catch(error => {
-      // console.log(error);
+      console.log(error);
     })
   })
 }

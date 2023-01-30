@@ -26,6 +26,7 @@
 </template>
 
 <script setup lang="ts">
+import { useAppAbility } from '@/plugins/casl/useAppAbility'
 import axios from '@axios'
 import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
@@ -36,6 +37,7 @@ const loginData = ref({
   password: ''
 })
 
+const ability = useAppAbility()
 const errors = ref({
   email: '',
   password: ''
@@ -54,7 +56,14 @@ const login = () => {
           password: loginData.value.password
         }
       }).then(response => {
-        localStorage.setItem('userData', JSON.stringify(response.data))
+        console.log(response);
+
+        const userData = response.data
+
+        console.log(userData.abilities);
+        localStorage.setItem('userAbilities', JSON.stringify(userData.abilities))
+        ability.update(userData.abilities)
+        localStorage.setItem('userData', JSON.stringify(userData))
 
         //redirect after store data in local storage
         router.replace(route.query.to ? String(route.query.to) : '/')
@@ -62,7 +71,6 @@ const login = () => {
         errors.value.email = error.response.data.email
         console.log(error.response.data.email);
       })
-
     }
   })
 }
