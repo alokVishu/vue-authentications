@@ -6,6 +6,7 @@
 
 // Components
 import '@/@fake-db/db'
+import '@/styles/_overrides.scss'
 import App from './App.vue'
 import ability from '@/plugins/casl/ability'
 import { abilitiesPlugin } from '@casl/vue'
