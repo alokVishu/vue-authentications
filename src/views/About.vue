@@ -6,5 +6,12 @@
       saepe libero, laboriosam sapiente doloribus, quod iure aliquid quasi ipsa corporis mollitia. Dolor, minima
       accusamus.
     </p>
+
+    <v-list>
+      <v-list-subheader>asdasd</v-list-subheader>
+      <v-list-item>
+        <v-list-item-title>asd</v-list-item-title>
+      </v-list-item>
+    </v-list>
   </div>
 </template>
